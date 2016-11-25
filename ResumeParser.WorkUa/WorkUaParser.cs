@@ -44,6 +44,8 @@ namespace ResumeParser.WorkUa
         private void ParseName(HtmlDocument document, Resume resume)
         {
             var nameNode = document.DocumentNode.SelectSingleNode(".//*[@class='cut-top']");
+            if(nameNode==null) return;
+
             var nodeContent = nameNode.InnerText;
             var parts = nodeContent.Split(' ');
             if(parts.Length < 2) return;
@@ -58,6 +60,8 @@ namespace ResumeParser.WorkUa
         private void ParseResumeUpdateTime(HtmlDocument document, Resume resume)
         {
             var node = document.DocumentNode.SelectSingleNode(".//*[@class='text-muted']");
+            if(node == null) return;
+            
             var nodeContent = node.InnerText;
             var dates = this.dateExtractor.ExtractDates(nodeContent);
             if (dates.Any())
@@ -66,23 +70,31 @@ namespace ResumeParser.WorkUa
 
         private void ParsePosition(HtmlDocument document, Resume resume)
         {
-            var positionNode = document.DocumentNode.SelectSingleNode(".//*[@class='col-sm-8']/h2/text()");
-            var positionNodeContent = positionNode.InnerText;
-            resume.Position = positionNodeContent.Trim();
-            if (resume.Position.Last() == ',')
-                resume.Position = resume.Position.RemoveLastSymbol();
+            var positionNode = document.DocumentNode.SelectSingleNode(".//*[contains(@class,'col-sm')]/h2/text()");
+            if (positionNode != null)
+            {
+                var positionNodeContent = positionNode.InnerText;
+                resume.Position = positionNodeContent.Trim();
+                if (resume.Position.Last() == ',')
+                    resume.Position = resume.Position.RemoveLastSymbol();
+            }
 
             var salaryNode =
-                document.DocumentNode.SelectSingleNode(".//*[@class='col-sm-8']/h2/*[@class='text-muted nowrap']");
-            var salaryNodeContent = salaryNode.InnerText;
-            var salaryMatch = Regex.Match(salaryNodeContent, "[0-9 ]+").Value;
-            if (!string.IsNullOrEmpty(salaryMatch))
-                resume.Salary = int.Parse(salaryMatch.Replace(" ",""));
+                document.DocumentNode.SelectSingleNode(".//*[contains(@class,'col-sm')]/h2/*[@class='text-muted nowrap']");
+            if (salaryNode != null)
+            {
+                var salaryNodeContent = salaryNode.InnerText;
+                var salaryMatch = Regex.Match(salaryNodeContent, "[0-9 ]+").Value;
+                if (!string.IsNullOrEmpty(salaryMatch))
+                    resume.Salary = int.Parse(salaryMatch.Replace(" ", ""));
+            }
         }
 
         private void ParseSchedule(HtmlDocument document, Resume resume)
         {
-            var node = document.DocumentNode.SelectSingleNode(".//*[@class='col-sm-8']/p[@class='text-muted']");
+            var node = document.DocumentNode.SelectSingleNode(".//*[contains(@class,'col-sm')]/p[@class='text-muted']");
+            if(node==null) return;
+            
             var nodeContent = node.InnerText;
             var parts = nodeContent.Split(',');
             if (parts.Length > 0)
@@ -94,6 +106,8 @@ namespace ResumeParser.WorkUa
         private void ParseBirthDate(HtmlDocument document, Resume resume)
         {
             var node = document.DocumentNode.SelectSingleNode(".//*[@class='dl-horizontal']/dd/text()");
+            if (node == null) return;
+
             var nodeContent = node.InnerText;
             var dates = this.dateExtractor.ExtractDates(nodeContent);
             if (dates.Any())
@@ -103,6 +117,8 @@ namespace ResumeParser.WorkUa
         private void ParseCity(HtmlDocument document, Resume resume)
         {
             var node = document.DocumentNode.SelectSingleNode(".//*[@class='dl-horizontal']/dd[2]/text()");
+            if (node == null) return;
+
             var nodeContent = node.InnerText;
             resume.City = nodeContent.Trim();
         }
@@ -111,6 +127,7 @@ namespace ResumeParser.WorkUa
         {
             var workPlaces = new List<Workplace>();
             var node = document.DocumentNode.SelectSingleNode(".//*[@class='cut-top' and text()='Опыт работы']");
+            if (node == null) return;
             while (true)
             {
                 var workplace = new Workplace();
@@ -142,6 +159,7 @@ namespace ResumeParser.WorkUa
         {
             var educations = new List<Education>();
             var node = document.DocumentNode.SelectSingleNode(".//*[@class='cut-top' and text()='Образование']");
+            if (node == null) return;
             while (true)
             {
                 var education = new Education();
@@ -166,6 +184,8 @@ namespace ResumeParser.WorkUa
         {
             var additionals = new Dictionary<string, string>();
             var headingNode = document.DocumentNode.SelectSingleNode(".//*[@class='cut-top' and text()='Профессиональные и другие навыки']");
+            if (headingNode == null) return;
+
             var nextUlNode = headingNode.SelectSingleNode("./following-sibling::ul");
             var liNodes = nextUlNode.SelectNodes("./li");
             foreach (var liNode in liNodes)

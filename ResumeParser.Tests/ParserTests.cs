@@ -41,5 +41,13 @@ namespace ResumeParser.Tests
             //additional
             Assert.AreEqual(resume.Additional.Count, 1);
         }
+
+        [TestMethod]
+        public void Tets2()
+        {
+            var testUrl = "https://www.work.ua/resumes/1287655/";
+            var parser = new WorkUaParser(new HttpHandler());
+            var resume = parser.Parse(testUrl);
+        }
     }
 }
