@@ -1,0 +1,26 @@
+﻿
+@{
+    ViewBag.Title = "Parse resume";
+}
+
+<h2>Parse resume</h2>
+
+<input type="text" id="resumeUrl" class="form-control" style="display: inline"/>
+<button class="btn btn-success" id="submit" value="">Submit</button>
+<div class="panel-body" id="resume"></div>
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            $("#submit").click(function () {
+                $("#resume").html('<i class="fa fa-spinner fa-spin fa-3x fa-fw margin-bottom"></i>');
+
+                var url = $("#resumeUrl").val();
+
+                $.post("/home/ParseResume", { Url: url }, function(data) {
+                    $("#resume").html(data);
+                });
+            });
+        });
+    </script>
+}

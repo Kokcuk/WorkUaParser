@@ -1,0 +1,45 @@
+﻿@model ResumeParser.Common.Entities.Resume
+
+@{
+    Layout = null;
+}
+
+<h4>Основная информация</h4>
+<p><b>Имя: </b> @Model.FirstName @Model.LastName @Model.MiddleName</p>
+<p><b>Должность: </b>@Model.Position</p>
+<p><b>Зарплата: </b>@Model.Salary</p>
+<p><b>Тип найма: </b>@Model.Employment, @Model.Place</p>
+<p><b>Дата рождения: </b>@Model.BirthDate</p>
+<p><b>Город: </b>@Model.City</p>
+<h4>Опыт работы</h4>
+<ul>
+    @foreach (var workplace in Model.WorkPlaces)
+    {
+        <li>
+            @workplace.Position <br/>
+            @workplace.Company <br/>
+            @workplace.Description <br/>
+            @string.Format("{0}.{1}", workplace.FromMonth, workplace.FromYear) - @string.Format("{0}.{1}", workplace.ToMonth, workplace.ToYear) <br/>
+        </li>
+    }
+</ul>
+<h4>Образование</h4>
+<ul>
+    @foreach (var education in Model.Educations)
+    {
+        <li>
+            @education.Faculty <br/>
+            @education.University <br/>
+            @education.GraduateYear <br/>
+        </li>
+    }
+</ul>
+<h4>Дополнительные навыки</h4>
+<ul>
+    @foreach (var additionals in Model.Additional)
+    {
+        <li>
+            @additionals.Key - @additionals.Value
+        </li>
+    }
+</ul>
